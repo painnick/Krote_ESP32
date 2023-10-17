@@ -28,7 +28,10 @@ License along with DFMiniMp3.  If not, see
 #define USE_MH2024K16SS
 
 #include <Arduino.h>
+#include <esp_log.h>
 #include <stdint.h>
+
+#define DFMINIMP3_TAG "DFMINI"
 
 enum DfMp3_Error {
     // from device
@@ -194,6 +197,10 @@ public:
     }
 
     void begin(unsigned long baud = 9600, unsigned long timeout = 10000) {
+        if (_RX_Pin == -1 && _TX_Pin == -1) {
+            ESP_LOGE(DFMINIMP3_TAG, "RX_Pin %d, TX_Pin %d", _RX_Pin, _TX_Pin);
+            return;
+        }
         _serial.begin(baud, SERIAL_8N1, _RX_Pin, _TX_Pin);
         _serial.setTimeout(timeout);
         delay(1000);
@@ -424,8 +431,8 @@ private:
     static const uint16_t c_msSendSpace = 50;
 
     T_SERIAL_METHOD &_serial;
-    int8_t _RX_Pin;
-    int8_t _TX_Pin;
+    int8_t _RX_Pin{-1};
+    int8_t _TX_Pin{-1};
     uint32_t _lastSend{}; // not initialized as agreed in issue #63
     uint16_t _lastSendSpace;
     bool _isOnline;
