@@ -9,6 +9,7 @@
 
 Servo turretServo;
 Servo radarServo;
+Servo gatlingServo;
 
 [[noreturn]] void taskSensor(__attribute__((unused)) void *params) {
     while (true) {
@@ -26,6 +27,29 @@ Servo radarServo;
     }
 }
 
+bool isGatlingOn = false;
+
+void taskGatling(__attribute__((unused)) void *params) {
+    isGatlingOn = true;
+    dfmp3.playAdvertisement(1);
+    dfmp3.loop();
+
+    gatlingServo.write(30);
+
+    for (int i = 0; i < 5; i++) {
+        digitalWrite(PIN_GATLING_LIGHT, HIGH);
+        delay(100);
+        digitalWrite(PIN_GATLING_LIGHT, LOW);
+        delay(100);
+    }
+
+    gatlingServo.write(0);
+
+    dfmp3.stopAdvertisement();
+    isGatlingOn = false;
+    vTaskDelete(nullptr);
+}
+
 void setup() {
 #ifdef DEBUG
     ESP_LOGI(MAIN_TAG, "Setup...");
@@ -35,16 +59,19 @@ void setup() {
     ledcSetup(CH_SENSOR_LIGHT, 1000, 8);
     ledcAttachPin(PIN_SENSOR_LIGHT, CH_SENSOR_LIGHT);
 
+    pinMode(PIN_GATLING_BUTTON, INPUT);
+
     setupSound();
     delay(1000);
 
     playBackground();
 
     radarServo.attach(PIN_RADAR_SERVO);
-    radarServo.write(30);
 
     turretServo.attach(PIN_TURRET_SERVO);
     turretServo.write(0);
+
+    gatlingServo.attach(PIN_GATLING_SERVO);
 
     xTaskCreate(
             taskSensor,
@@ -63,42 +90,25 @@ void setup() {
             nullptr);
 }
 
-void loop() {
-//    uint16_t val = analogRead(PIN_GATLING_BUTTON);
-//    if (val < 255) {
-//#ifdef DEBUG
-//        ESP_LOGI(MAIN_TAG, "Click!");
-//#endif
-//        dfmp3.playAdvertisement(1);
-//        dfmp3.loop();
-//
-//        for (int i = 0; i < 5; i++) {
-//            digitalWrite(PIN_GATLING_LIGHT, HIGH);
-//            delay(100);
-//            digitalWrite(PIN_GATLING_LIGHT, LOW);
-//            delay(100);
-//        }
-//        dfmp3.stopAdvertisement();
+int lastGatlingButtonState = HIGH;
 
-//#ifdef DEBUG
-//        static int count = 0;
-//        auto isExplosion = (++count) % 3 == 1;
-//#else
-//        auto isExplosion = random(0, 5) == 1;
-//#endif
-//        if (isExplosion) {
-//#ifdef DEBUG
-//            ESP_LOGI(MAIN_TAG, "Explosion!!!");
-//#endif
-//            delay(1000);
-//            dfmp3.playAdvertisement(2);
-//            dfmp3.loop();
-//            delay(1200);
-//            dfmp3.stopAdvertisement();
-//            dfmp3.loop();
-//            delay(1500);
-//        }
-//    }
+void loop() {
+    auto gatlingBtnClick = digitalRead(PIN_GATLING_BUTTON);
+    if (gatlingBtnClick == HIGH) {
+        if (lastGatlingButtonState == LOW) {
+            ESP_LOGI(MAIN_TAG, "Click!");
+            if (!isGatlingOn) {
+                xTaskCreate(
+                        taskGatling,
+                        "Gatling",
+                        10000,
+                        nullptr,
+                        1,
+                        nullptr);
+            }
+        }
+    }
+    lastGatlingButtonState = gatlingBtnClick;
 
     dfmp3.loop();
 }
