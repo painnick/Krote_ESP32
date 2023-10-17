@@ -23,13 +23,6 @@ Servo radarServo;
 #endif
         turretServo.write(random() % 30);
         delay(1000 * 10);
-        dfmp3.playRandomTrackFromAll();
-        dfmp3.loop();
-
-        uint16_t cnt = dfmp3.getTotalTrackCount(DfMp3_PlaySource_Sd);
-#ifdef DEBUG
-        ESP_LOGI(MAIN_TAG, "Track count : %d", cnt);
-#endif
     }
 }
 
@@ -43,13 +36,9 @@ void setup() {
     ledcAttachPin(PIN_SENSOR_LIGHT, CH_SENSOR_LIGHT);
 
     setupSound();
-
     delay(1000);
 
-    dfmp3.playMp3FolderTrack(2);
-    dfmp3.loop();
-//    dfmp3.setRepeatPlayCurrentTrack(true);
-//    dfmp3.loop();
+    playBackground();
 
     radarServo.attach(PIN_RADAR_SERVO);
     radarServo.write(30);

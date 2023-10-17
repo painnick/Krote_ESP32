@@ -122,6 +122,13 @@ void setupSound() {
     ESP_LOGI(MP3_TAG, "Setup DFPlayer");
 }
 
+void playBackground() {
+    dfmp3.playMp3FolderTrack(1);
+    dfmp3.loop();
+//    dfmp3.setRepeatPlayCurrentTrack(true);
+//    dfmp3.loop();
+}
+
 void randomPlayGeneral() {
     int ret = dfmp3.getStatus();
     if (ret == 0) {
