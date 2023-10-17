@@ -111,14 +111,15 @@ void setupSound() {
 //    delay(1);
 //  }
 
+    ESP_LOGI(MP3_TAG, "Set Volume");
+#ifdef DEBUG
+    dfmp3.setVolume(10);
+#else
     dfmp3.setVolume(20);
+#endif
     dfmp3.loop();
 
-#ifdef DEBUG
-    ESP_LOGI(MP3_TAG, "Set Volume");
-
     ESP_LOGI(MP3_TAG, "Setup DFPlayer");
-#endif
 }
 
 void randomPlayGeneral() {
