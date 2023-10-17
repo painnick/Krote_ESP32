@@ -99,8 +99,7 @@ public:
     }
 };
 
-HardwareSerial dfSerial(2);
-DfMp3 dfmp3(dfSerial);
+DfMp3 dfmp3(Serial1);
 
 void setupSound() {
 
