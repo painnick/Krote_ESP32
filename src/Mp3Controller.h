@@ -1,8 +1,10 @@
 #pragma once
 
-#include "Arduino.h"
+#include <Arduino.h>
+#include <esp_log.h>
+
+#include "common.h"
 #include "DFMiniMp3.h"
-#include "esp_log.h"
 
 #define MP3_TAG "DFPLAYER"
 
@@ -99,7 +101,7 @@ public:
     }
 };
 
-DfMp3 dfmp3(Serial1);
+DfMp3 dfmp3(Serial1, PIN_MP3_RX, PIN_MP3_TX);
 
 void setupSound() {
 

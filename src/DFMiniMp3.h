@@ -185,14 +185,16 @@ template <class T_SERIAL_METHOD, class T_NOTIFICATION_METHOD, class T_CHIP_VARIA
 #endif
 class DFMiniMp3 {
 public:
-    explicit DFMiniMp3(T_SERIAL_METHOD &serial) :
+    explicit DFMiniMp3(T_SERIAL_METHOD &serial, int8_t RX_Pin, int8_t TX_Pin) :
             _serial(serial),
             _lastSendSpace(c_msSendSpace),
-            _isOnline(false) {
+            _isOnline(false),
+            _RX_Pin(RX_Pin),
+            _TX_Pin(TX_Pin) {
     }
 
     void begin(unsigned long baud = 9600, unsigned long timeout = 10000) {
-        _serial.begin(baud, SERIAL_8N1, 32, 33);
+        _serial.begin(baud, SERIAL_8N1, _RX_Pin, _TX_Pin);
         _serial.setTimeout(timeout);
         delay(1000);
         _lastSend = millis();
@@ -422,6 +424,8 @@ private:
     static const uint16_t c_msSendSpace = 50;
 
     T_SERIAL_METHOD &_serial;
+    int8_t _RX_Pin;
+    int8_t _TX_Pin;
     uint32_t _lastSend{}; // not initialized as agreed in issue #63
     uint16_t _lastSendSpace;
     bool _isOnline;
