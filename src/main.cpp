@@ -38,10 +38,10 @@ Servo turretServo;
     while (true) {
         ESP_LOGI(MAIN_TAG, "Radar");
 
+        delay(1000 * 10);
         ledcWrite(CH_RADAR_MOTOR, 47);
         delay(1000 * 3);
         ledcWrite(CH_RADAR_MOTOR, 0);
-        delay(1000 * 10);
     }
 }
 
