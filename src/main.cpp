@@ -15,6 +15,10 @@ Servo turretServo;
 #define LIGHT_STEP 24
 #define LIGHT_MAX (LIGHT_BASE + LIGHT_STEP * 3)
 
+TaskHandle_t sensorTaskHandle;
+TaskHandle_t radarTaskHandle;
+TaskHandle_t turretTaskHandle;
+
 [[noreturn]] void taskSensor(__attribute__((unused)) void *params) {
     while (true) {
         ESP_LOGI(MAIN_TAG, "Sensor");
@@ -59,6 +63,9 @@ bool isGatlingOn = false;
 void taskGatling(__attribute__((unused)) void *params) {
     ESP_LOGI(MAIN_TAG, "Fire!");
 
+    vTaskSuspend(radarTaskHandle);
+    vTaskSuspend(sensorTaskHandle);
+
     isGatlingOn = true;
 
     dfmp3.playAdvertisement(1);
@@ -79,6 +86,10 @@ void taskGatling(__attribute__((unused)) void *params) {
 
     dfmp3.stopAdvertisement();
     isGatlingOn = false;
+
+    vTaskResume(radarTaskHandle);
+    vTaskResume(sensorTaskHandle);
+
     vTaskDelete(nullptr);
 }
 
@@ -103,7 +114,7 @@ void setup() {
             10000,
             nullptr,
             2,
-            nullptr);
+            &sensorTaskHandle);
 
     // Search Light
     pinMode(PIN_SEARCH_BUTTON, INPUT);
@@ -119,7 +130,7 @@ void setup() {
             10000,
             nullptr,
             1,
-            nullptr);
+            &turretTaskHandle);
 
     // Radar
     ledcSetup(CH_RADAR_MOTOR, 1000, 8);
@@ -131,7 +142,7 @@ void setup() {
             10000,
             nullptr,
             3,
-            nullptr);
+            &radarTaskHandle);
 
     // Sound
     pinMode(PIN_MP3_BUSY, INPUT);
