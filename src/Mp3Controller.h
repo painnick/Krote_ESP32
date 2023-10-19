@@ -8,6 +8,12 @@
 
 #define MP3_TAG "DFPLAYER"
 
+#ifdef DEBUG
+    #define DEFAULT_VOLUME 10
+#else
+    #define DEFAULT_VOLUME 20
+#endif
+
 class Mp3Notify;
 
 typedef DFMiniMp3<HardwareSerial, Mp3Notify> DfMp3;
@@ -103,6 +109,12 @@ public:
 
 DfMp3 dfmp3(Serial1, PIN_MP3_RX, PIN_MP3_TX);
 
+void setDefaultVolume() {
+    ESP_LOGD(MP3_TAG, "Set Volume");
+    dfmp3.setVolume(DEFAULT_VOLUME);
+    dfmp3.loop();
+}
+
 void setupSound() {
 
     dfmp3.begin(9600, 1000);
@@ -111,13 +123,7 @@ void setupSound() {
 //    delay(1);
 //  }
 
-    ESP_LOGI(MP3_TAG, "Set Volume");
-#ifdef DEBUG
-    dfmp3.setVolume(10);
-#else
-    dfmp3.setVolume(20);
-#endif
-    dfmp3.loop();
+    setDefaultVolume();
 
     ESP_LOGI(MP3_TAG, "Setup DFPlayer");
 }
