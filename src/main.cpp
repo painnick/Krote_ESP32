@@ -70,10 +70,13 @@ void taskGatling(__attribute__((unused)) void *params) {
 
     isGatlingOn = true;
 
+    dfmp3.setVolume(25);
+    dfmp3.loop();
+
     dfmp3.playAdvertisement(1);
     dfmp3.loop();
 
-    delay(300);
+    delay(500);
 
     ledcWrite(CH_GATLING_MOTOR, 255);
 
@@ -86,7 +89,11 @@ void taskGatling(__attribute__((unused)) void *params) {
 
     ledcWrite(CH_GATLING_MOTOR, 0);
 
+    setDefaultVolume();
+
     dfmp3.stopAdvertisement();
+    dfmp3.loop();
+
     isGatlingOn = false;
 
     vTaskResume(radarTaskHandle);

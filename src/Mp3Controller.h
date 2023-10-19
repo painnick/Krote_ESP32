@@ -9,10 +9,14 @@
 #define MP3_TAG "DFPLAYER"
 
 #ifdef DEBUG
-    #define DEFAULT_VOLUME 10
+#define DEFAULT_VOLUME 10
 #else
-    #define DEFAULT_VOLUME 20
+#define DEFAULT_VOLUME 20
 #endif
+
+int BACKGROUND_TRACK = -1;
+
+void playBackground();
 
 class Mp3Notify;
 
@@ -92,6 +96,9 @@ public:
 #ifdef DEBUG
         ESP_LOGD(MP3_TAG, "Play finished for #%d", track);
 #endif
+        if (track == BACKGROUND_TRACK) {
+            playBackground();
+        }
     }
 
     static void OnPlaySourceOnline(DfMp3 &mp3, DfMp3_PlaySources source) {
@@ -131,8 +138,8 @@ void setupSound() {
 void playBackground() {
     dfmp3.playMp3FolderTrack(1);
     dfmp3.loop();
-//    dfmp3.setRepeatPlayCurrentTrack(true);
-//    dfmp3.loop();
+
+    BACKGROUND_TRACK = dfmp3.getCurrentTrack();
 }
 
 void randomPlayGeneral() {
