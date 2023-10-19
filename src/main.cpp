@@ -42,7 +42,9 @@ TaskHandle_t turretTaskHandle;
     while (true) {
         ESP_LOGI(MAIN_TAG, "Radar");
 
-        delay(1000 * 20);
+        for (int i = 0; i < 20; i++) {
+            delay(1000);
+        }
         ledcWrite(CH_RADAR_MOTOR, 47);
         delay(1000 * 1);
         ledcWrite(CH_RADAR_MOTOR, 0);
