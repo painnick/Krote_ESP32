@@ -6,22 +6,9 @@
 #include "Mp3Controller.h"
 #include "SensorController.h"
 #include "RadarController.h"
+#include "TurretController.h"
 
 #define MAIN_TAG "Main"
-
-Servo turretServo;
-
-
-TaskHandle_t turretTaskHandle;
-
-[[noreturn]] void taskTurret(__attribute__((unused)) void *params) {
-    while (true) {
-        ESP_LOGI(MAIN_TAG, "Turret move");
-
-        turretServo.write(random() % 30);
-        delay(1000 * 10);
-    }
-}
 
 bool isGatlingOn = false;
 
@@ -84,16 +71,7 @@ void setup() {
     pinMode(PIN_SEARCH_LIGHT, OUTPUT);
 
     // Turret
-    turretServo.attach(PIN_TURRET_SERVO, 500, 2500);
-    turretServo.write(0);
-
-    xTaskCreate(
-            taskTurret,
-            "Turret",
-            10000,
-            nullptr,
-            1,
-            &turretTaskHandle);
+    initTurret();
 
     // Radar
     initRadar();
