@@ -5,27 +5,14 @@
 #include "common.h"
 #include "Mp3Controller.h"
 #include "SensorController.h"
+#include "RadarController.h"
 
 #define MAIN_TAG "Main"
 
 Servo turretServo;
 
 
-TaskHandle_t radarTaskHandle;
 TaskHandle_t turretTaskHandle;
-
-[[noreturn]] void taskRadar(__attribute__((unused)) void *params) {
-    while (true) {
-        ESP_LOGI(MAIN_TAG, "Radar");
-
-        for (int i = 0; i < 20; i++) {
-            delay(1000);
-        }
-        ledcWrite(CH_RADAR_MOTOR, 47);
-        delay(1000 * 1);
-        ledcWrite(CH_RADAR_MOTOR, 0);
-    }
-}
 
 [[noreturn]] void taskTurret(__attribute__((unused)) void *params) {
     while (true) {
@@ -41,7 +28,7 @@ bool isGatlingOn = false;
 void taskGatling(__attribute__((unused)) void *params) {
     ESP_LOGI(MAIN_TAG, "Fire!");
 
-    vTaskSuspend(radarTaskHandle);
+    suspendRadar();
     suspendSensor();
 
     isGatlingOn = true;
@@ -72,7 +59,7 @@ void taskGatling(__attribute__((unused)) void *params) {
 
     isGatlingOn = false;
 
-    vTaskResume(radarTaskHandle);
+    resumeRadar();
     resumeSensor();
 
     vTaskDelete(nullptr);
@@ -109,16 +96,7 @@ void setup() {
             &turretTaskHandle);
 
     // Radar
-    ledcSetup(CH_RADAR_MOTOR, 1000, 8);
-    ledcAttachPin(PIN_RADAR_MOTOR, CH_RADAR_MOTOR);
-
-    xTaskCreate(
-            taskRadar,
-            "Radar",
-            10000,
-            nullptr,
-            3,
-            &radarTaskHandle);
+    initRadar();
 
     // Sound
     pinMode(PIN_MP3_BUSY, INPUT);
