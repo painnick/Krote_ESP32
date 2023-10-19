@@ -6,7 +6,6 @@
 
 #define PIN_MP3_TX 33 // dfplayer(FIXED)
 #define PIN_MP3_RX 32 // dfplayer(FIXED)
-#define PIN_MP3_BUSY 35
 
 #define PIN_GATLING_BUTTON 34
 #define PIN_GATLING_MOTOR 27

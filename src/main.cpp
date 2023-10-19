@@ -10,32 +10,20 @@
 
 #define MAIN_TAG "Main"
 
-
 void setup() {
     ESP_LOGI(MAIN_TAG, "Setup...");
 
-    // Gatling
-    initGatling();
+    setupGatling();
+    setupSensor();
+    setupTurret();
+    setupRadar();
 
-    // Sensor Light
-    initSensor();
-
-    // Search Light
     pinMode(PIN_SEARCH_BUTTON, INPUT);
     pinMode(PIN_SEARCH_LIGHT, OUTPUT);
 
-    // Turret
-    initTurret();
-
-    // Radar
-    initRadar();
-
-    // Sound
-    pinMode(PIN_MP3_BUSY, INPUT);
-
     setupSound();
-    delay(1000);
 
+    delay(1000);
     playBackground();
 }
 

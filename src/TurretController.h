@@ -25,7 +25,7 @@ TaskHandle_t turretTaskHandle;
     }
 }
 
-void initTurret() {
+void setupTurret() {
     turretServo.attach(PIN_TURRET_SERVO, 500, 2500);
     turretServo.write(0);
 

@@ -52,7 +52,7 @@ void taskGatling(__attribute__((unused)) void *params) {
     vTaskDelete(nullptr);
 }
 
-void initGatling() {
+void setupGatling() {
     pinMode(PIN_GATLING_BUTTON, INPUT);
     pinMode(PIN_GATLING_LIGHT, OUTPUT);
 

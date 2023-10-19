@@ -22,7 +22,7 @@ TaskHandle_t radarTaskHandle;
     }
 }
 
-void initRadar() {
+void setupRadar() {
     ledcSetup(CH_RADAR_MOTOR, 1000, 8);
     ledcAttachPin(PIN_RADAR_MOTOR, CH_RADAR_MOTOR);
 

@@ -32,7 +32,7 @@ TaskHandle_t sensorTaskHandle;
     }
 }
 
-void initSensor() {
+void setupSensor() {
     ledcSetup(CH_SENSOR_LIGHT, 1000, 8);
     ledcAttachPin(PIN_SENSOR_LIGHT, CH_SENSOR_LIGHT);
 
