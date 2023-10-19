@@ -41,7 +41,7 @@ void setupSensor() {
             "Sensor",
             10000,
             nullptr,
-            2,
+            1,
             &sensorTaskHandle);
 }
 

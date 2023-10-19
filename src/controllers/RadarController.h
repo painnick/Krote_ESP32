@@ -31,7 +31,7 @@ void setupRadar() {
             "Radar",
             10000,
             nullptr,
-            3,
+            1,
             &radarTaskHandle);
 
 }
