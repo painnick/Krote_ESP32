@@ -1,42 +1,18 @@
 #include <Arduino.h>
 #include <esp_log.h>
 #include <ESP32Servo.h>
-#include <ESP32PWM.h>
 
 #include "common.h"
 #include "Mp3Controller.h"
+#include "SensorController.h"
 
 #define MAIN_TAG "Main"
 
 Servo turretServo;
 
 
-#define LIGHT_BASE 32
-#define LIGHT_STEP 24
-#define LIGHT_MAX (LIGHT_BASE + LIGHT_STEP * 3)
-
-TaskHandle_t sensorTaskHandle;
 TaskHandle_t radarTaskHandle;
 TaskHandle_t turretTaskHandle;
-
-[[noreturn]] void taskSensor(__attribute__((unused)) void *params) {
-    while (true) {
-        ESP_LOGI(MAIN_TAG, "Sensor");
-
-        ledcWrite(CH_SENSOR_LIGHT, LIGHT_BASE);
-        delay(150);
-        ledcWrite(CH_SENSOR_LIGHT, LIGHT_BASE + LIGHT_STEP);
-        delay(150);
-        ledcWrite(CH_SENSOR_LIGHT, LIGHT_MAX);
-        delay(300);
-        ledcWrite(CH_SENSOR_LIGHT, LIGHT_BASE + LIGHT_STEP);
-        delay(150);
-        ledcWrite(CH_SENSOR_LIGHT, LIGHT_BASE);
-        delay(150);
-        ledcWrite(CH_SENSOR_LIGHT, 0);
-        delay(1000 * random(5, 10));
-    }
-}
 
 [[noreturn]] void taskRadar(__attribute__((unused)) void *params) {
     while (true) {
@@ -66,7 +42,7 @@ void taskGatling(__attribute__((unused)) void *params) {
     ESP_LOGI(MAIN_TAG, "Fire!");
 
     vTaskSuspend(radarTaskHandle);
-    vTaskSuspend(sensorTaskHandle);
+    suspendSensor();
 
     isGatlingOn = true;
 
@@ -97,7 +73,7 @@ void taskGatling(__attribute__((unused)) void *params) {
     isGatlingOn = false;
 
     vTaskResume(radarTaskHandle);
-    vTaskResume(sensorTaskHandle);
+    resumeSensor();
 
     vTaskDelete(nullptr);
 }
@@ -114,16 +90,7 @@ void setup() {
     ledcAttachPin(PIN_GATLING_MOTOR, CH_GATLING_MOTOR);
 
     // Sensor Light
-    ledcSetup(CH_SENSOR_LIGHT, 1000, 8);
-    ledcAttachPin(PIN_SENSOR_LIGHT, CH_SENSOR_LIGHT);
-
-    xTaskCreate(
-            taskSensor,
-            "Sensor",
-            10000,
-            nullptr,
-            2,
-            &sensorTaskHandle);
+    initSensor();
 
     // Search Light
     pinMode(PIN_SEARCH_BUTTON, INPUT);

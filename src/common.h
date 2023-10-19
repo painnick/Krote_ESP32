@@ -26,3 +26,8 @@
 #define CH_GATLING_MOTOR 3
 #define CH_RADAR_MOTOR 1
 #define CH_SENSOR_LIGHT 2
+
+
+#define LIGHT_BASE 32
+#define LIGHT_STEP 24
+#define LIGHT_MAX (LIGHT_BASE + LIGHT_STEP * 3)
