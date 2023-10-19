@@ -2,11 +2,11 @@
 #include <esp_log.h>
 
 #include "common.h"
-#include "Mp3Controller.h"
-#include "SensorController.h"
-#include "RadarController.h"
-#include "TurretController.h"
-#include "GatlingController.h"
+#include "controllers/Mp3Controller.h"
+#include "controllers/SensorController.h"
+#include "controllers/RadarController.h"
+#include "controllers/TurretController.h"
+#include "controllers/GatlingController.h"
 
 #define MAIN_TAG "Main"
 
