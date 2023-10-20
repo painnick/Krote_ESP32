@@ -7,6 +7,7 @@
 #include "Mp3Controller.h"
 #include "SensorController.h"
 #include "RadarController.h"
+#include "TurretController.h"
 
 #define GATLING_TAG "Gatling"
 
@@ -17,6 +18,7 @@ void taskGatling(__attribute__((unused)) void *params) {
 
     suspendRadar();
     suspendSensor();
+    suspendTurret();
 
     isGatlingOn = true;
 
@@ -48,6 +50,7 @@ void taskGatling(__attribute__((unused)) void *params) {
 
     resumeRadar();
     resumeSensor();
+    resumeTurret();
 
     vTaskDelete(nullptr);
 }
