@@ -4,6 +4,7 @@
 #include <esp_log.h>
 
 #include "common.h"
+#include "TurretController.h"
 
 #define RADAR_TAG "Radar"
 
@@ -16,9 +17,20 @@ TaskHandle_t radarTaskHandle;
         for (int i = 0; i < 20; i++) {
             delay(1000);
         }
-        ledcWrite(CH_RADAR_MOTOR, 47);
-        delay(1000 * 1);
-        ledcWrite(CH_RADAR_MOTOR, 0);
+
+        suspendTurret();
+
+        delay(1000 * 3);
+
+        int repeat = 1 + (random() % 3);
+        for(int i = 0; i < repeat; i ++) {
+            ledcWrite(CH_RADAR_MOTOR, 127);
+            delay(1000 * 1);
+            ledcWrite(CH_RADAR_MOTOR, 0);
+            delay(1000 * 2);
+        }
+
+        resumeTurret();
     }
 }
 
