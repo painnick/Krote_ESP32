@@ -13,51 +13,57 @@ Servo turretServo;
 #define TURRET_CENTER_ANGLE 90
 
 int targetTurretAngle = TURRET_CENTER_ANGLE;
-int currentTurretAngle = TURRET_CENTER_ANGLE;
-bool turretRotateForward = true;
+int minTurretAngle = TURRET_CENTER_ANGLE - 45;
+int maxTurretAngle = TURRET_CENTER_ANGLE + 45;
 
-unsigned long lastTurretCheckTime = 0;
-boolean isTurretOn = true;
-int turretWaitMs = 1000 * 10;
+bool isTurretOn = true;
+unsigned long turretWaitStart = 0;
+unsigned long turretWaitMs = 1000;
+bool isTurretForward = true;
+bool isTurretDirectionChanged = false;
 
 void loopTurret(unsigned long now) {
     if (isTurretOn) {
-        if (now - lastTurretCheckTime > 50) {
-            int angleDiff = abs(targetTurretAngle - currentTurretAngle);
-            if (angleDiff >= 15) {
-                int lastAngle = currentTurretAngle;
-                int step = 2 + (random() % 6);
-                if (turretRotateForward) {
-                    currentTurretAngle += step;
-                } else {
-                    currentTurretAngle -= step;
-                }
-                turretServo.write(currentTurretAngle);
-                ESP_LOGD(TURRET_TAG, "Turret move %d -> %d, Target %d", lastAngle, currentTurretAngle,
-                         targetTurretAngle);
-            } else {
-                isTurretOn = false;
-                turretWaitMs = 1000 * (angleDiff / 3 + (random() % 5));
-                ESP_LOGD(TURRET_TAG, "Wait %d ms", turretWaitMs);
-            }
-            lastTurretCheckTime = now;
+//        ESP_LOGD(TURRET_TAG, "Rotate Turret! %d", targetTurretAngle);
+        turretServo.write(targetTurretAngle);
+        isTurretOn = false;
+        turretWaitStart = now;
+        if (isTurretDirectionChanged) {
+            turretWaitMs = 1000 * 5;
+            ESP_LOGD(TURRET_TAG, "Wait %d ms", turretWaitMs);
+        } else {
+            turretWaitMs = (1 + (random() % 3)) * 500;
         }
     } else {
-        int lastTargetAngle = targetTurretAngle;
-        if (now - lastTurretCheckTime > turretWaitMs) {
-            int newTargetAngle = TURRET_CENTER_ANGLE - 45 + (random() % 10) * 10;
-            turretRotateForward = (newTargetAngle > lastTargetAngle);
-            targetTurretAngle = newTargetAngle;
-
-            ESP_LOGD(TURRET_TAG, "Set target %d => %d", lastTargetAngle, newTargetAngle);
-
+        if (now - turretWaitStart > turretWaitMs) {
+            int step = (1 + random() % 4) * 5;
+            if (isTurretForward) {
+                targetTurretAngle += step;
+            } else {
+                targetTurretAngle -= step;
+            }
+            if (targetTurretAngle > maxTurretAngle) {
+                targetTurretAngle = maxTurretAngle;
+                maxTurretAngle = 90 + (1 + (random() % 5)) * 9;
+                ESP_LOGD(TURRET_TAG, "New Max angle %d", maxTurretAngle);
+                isTurretForward = false;
+                isTurretDirectionChanged = true;
+            } else if (targetTurretAngle < minTurretAngle) {
+                targetTurretAngle = minTurretAngle;
+                minTurretAngle = 90 - (1 + (random() % 5)) * 9;
+                ESP_LOGD(TURRET_TAG, "New Min angle %d", minTurretAngle);
+                isTurretForward = true;
+                isTurretDirectionChanged = true;
+            } else {
+                isTurretDirectionChanged = false;
+            }
             isTurretOn = true;
-            lastTurretCheckTime = now;
+            ESP_LOGD(TURRET_TAG, "Target angle %d", targetTurretAngle);
         }
     }
 }
 
 void setupTurret() {
     turretServo.attach(PIN_TURRET_SERVO, 500, 2500);
-    turretServo.write(currentTurretAngle);
+    turretServo.write(targetTurretAngle);
 }
