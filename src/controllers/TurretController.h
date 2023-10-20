@@ -10,30 +10,55 @@ Servo turretServo;
 
 #define TURRET_TAG "Turret"
 
-TaskHandle_t turretTaskHandle;
+#define TURRET_CENTER_ANGLE 30
+#define TURRET_MOVE_STEP 3
 
-[[noreturn]] void taskTurret(__attribute__((unused)) void *params) {
-    while (true) {
-        ESP_LOGD(TURRET_TAG, "Turret move");
+int targetTurretAngle = TURRET_CENTER_ANGLE;
+int currentTurretAngle = TURRET_CENTER_ANGLE;
+bool turretRotateForward = true;
 
-        turretServo.write(random() % 30);
-
-        for (int i = 0; i < 10; i++) {
-            delay(1000);
-
+void loopTurret() {
+    int angleDiff = abs(targetTurretAngle - currentTurretAngle);
+    if (angleDiff >= 15) {
+        int lastAngle = currentTurretAngle;
+        int step = (random() % 5);
+        if (turretRotateForward) {
+            currentTurretAngle += step;
+        } else {
+            currentTurretAngle -= step;
         }
+        turretServo.write(currentTurretAngle);
+        ESP_LOGD(TURRET_TAG, "Turret move %d -> %d, Target %d", lastAngle, currentTurretAngle, targetTurretAngle);
+
+        delay(50);
+    } else {
+        int sleepSec = angleDiff + (random() % 5);
+        for (int i = 0; i < sleepSec; i++) {
+            delay(1000);
+        }
+
+        int lastTargetAngle = targetTurretAngle;
+        int newTargetAngle = TURRET_CENTER_ANGLE + (random() % 9) * 10;
+        turretRotateForward = (newTargetAngle > lastTargetAngle);
+        targetTurretAngle = newTargetAngle;
+
+        ESP_LOGD(TURRET_TAG, "Set target %d => %d", lastTargetAngle, newTargetAngle);
     }
+
+/**
+ * Sample
+    currentTurretAngle = (currentTurretAngle + 5) % 60;
+    turretServo.write(60 + currentTurretAngle);
+    ESP_LOGD(TURRET_TAG, "Current %d", currentTurretAngle);
+    if(currentTurretAngle == 0) {
+        delay(3000);
+    } else {
+        delay(500);
+    }
+*/
 }
 
 void setupTurret() {
     turretServo.attach(PIN_TURRET_SERVO, 500, 2500);
-    turretServo.write(0);
-
-    xTaskCreate(
-            taskTurret,
-            "Turret",
-            10000,
-            nullptr,
-            1,
-            &turretTaskHandle);
+    turretServo.write(currentTurretAngle);
 }

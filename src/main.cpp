@@ -15,8 +15,8 @@ void setup() {
 
     setupGatling();
     setupSensor();
-    setupTurret();
     setupRadar();
+    setupTurret();
 
     pinMode(PIN_SEARCH_BUTTON, INPUT);
     pinMode(PIN_SEARCH_LIGHT, OUTPUT);
@@ -29,6 +29,8 @@ void setup() {
 
 void loop() {
     checkGatlingBtnClicked();
+
+    loopTurret();
 
     dfmp3.loop();
 }
