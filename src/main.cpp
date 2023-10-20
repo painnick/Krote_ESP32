@@ -28,9 +28,11 @@ void setup() {
 }
 
 void loop() {
+    unsigned long now = millis();
+
     checkGatlingBtnClicked();
 
-    loopTurret();
+    loopTurret(now);
 
     dfmp3.loop();
 }
