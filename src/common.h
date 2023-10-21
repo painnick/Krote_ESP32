@@ -24,9 +24,9 @@
 #define PIN_STEP_MOTOR 26
 
 
-#define CH_GATLING_MOTOR 3
-#define CH_RADAR_MOTOR 1
-#define CH_SENSOR_LIGHT 2
+#define CH_GATLING_MOTOR 1
+#define CH_RADAR_MOTOR 2
+#define CH_SENSOR_LIGHT 3
 #define CH_STEP_MOTOR 4
 #define CH_SEARCH_LIGHT 5
 
