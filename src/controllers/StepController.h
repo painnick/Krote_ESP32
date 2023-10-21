@@ -24,14 +24,14 @@ void checkStepBtnClicked() {
         changed = true;
     }
     if(changed) {
-        if (!isWalking) {
+        isWalking = !isWalking;
+        if (isWalking) {
             ESP_LOGD(STEP_TAG, "Walk");
             ledcWrite(CH_STEP_MOTOR, 255);
         } else {
             ESP_LOGD(STEP_TAG, "Stop walking");
             ledcWrite(CH_STEP_MOTOR, 0);
         }
-        isWalking = !isWalking;
     }
 
     lastStepButtonState = stepBtnClick;
