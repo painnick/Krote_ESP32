@@ -13,19 +13,21 @@
 
 #define PIN_SENSOR_LIGHT 23
 
-#define PIN_SEARCH_BUTTON 39
+#define PIN_SEARCH_BUTTON 36
 #define PIN_SEARCH_LIGHT 21
 
 #define PIN_TURRET_SERVO 25
 
 #define PIN_RADAR_MOTOR 14
 
+#define PIN_STEP_BUTTON 39
+#define PIN_STEP_MOTOR 26
 
 
 #define CH_GATLING_MOTOR 3
 #define CH_RADAR_MOTOR 1
 #define CH_SENSOR_LIGHT 2
-
+#define CH_STEP_MOTOR 4
 
 #define LIGHT_BASE 32
 #define LIGHT_STEP 24

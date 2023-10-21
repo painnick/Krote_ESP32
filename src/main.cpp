@@ -7,6 +7,7 @@
 #include "controllers/RadarController.h"
 #include "controllers/TurretController.h"
 #include "controllers/GatlingController.h"
+#include "controllers/StepController.h"
 
 #define MAIN_TAG "Main"
 
@@ -17,6 +18,7 @@ void setup() {
     setupSensor();
     setupRadar();
     setupTurret();
+    setupStep();
 
     pinMode(PIN_SEARCH_BUTTON, INPUT);
     pinMode(PIN_SEARCH_LIGHT, OUTPUT);
@@ -31,6 +33,7 @@ void loop() {
     unsigned long now = millis();
 
     checkGatlingBtnClicked();
+    checkStepBtnClicked();
 
     loopTurret(now);
 
