@@ -8,6 +8,7 @@
 #include "controllers/TurretController.h"
 #include "controllers/GatlingController.h"
 #include "controllers/StepController.h"
+#include "controllers/SearchLightController.h"
 
 #define MAIN_TAG "Main"
 
@@ -19,9 +20,7 @@ void setup() {
     setupRadar();
     setupTurret();
     setupStep();
-
-    pinMode(PIN_SEARCH_BUTTON, INPUT);
-    pinMode(PIN_SEARCH_LIGHT, OUTPUT);
+    setupSearchLight();
 
     setupSound();
 
@@ -34,6 +33,7 @@ void loop() {
 
     checkGatlingBtnClicked();
     checkStepBtnClicked();
+    checkSearchLightBtnClicked();
 
     loopTurret(now);
 
